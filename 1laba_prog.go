@@ -20,7 +20,7 @@ func main() {
 	fmt.Print("Введите строку в формате: имя студента(кавычки), название темы(кавычки), дата выдачи(гггг.мм.дд)\n")
 	input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 	//fmt.Println(input)
-	split := regexp.MustCompile(`"[^"]*"|\d{4}.\d{2}.\d{2}`).FindAllString(input, -1)
+	split := regexp.MustCompile(`"[^"]*"|\d{4}\.\d{2}\.\d{2}`).FindAllString(input, -1)
 	for i := 0; i < len(split); i++ {
 		fmt.Println(split[i])
 	}
@@ -35,4 +35,4 @@ func main() {
 	fmt.Println(work)
 }
 
-//"Новокрещенов Александр Денисович", "Инфобез", 1234.12.12
+//"Новокрещенов Александр Денисович", "Инфобез", 2025.02.12
