@@ -35,6 +35,5 @@ func main() {
 	}
 	fmt.Println("\n" + work.name + " " + work.nameOfWork + " " + work.date.Format("2006.01.02") + " " + work.typeOfwork + "\n")
 	fmt.Println(work)
-}
 
-//"Новокрещенов Александр Денисович", "Инфобез", 2025.02.12
+}
