@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>"2 Лаборторная"</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+        [contenteditable] { padding: 5px; border-radius: 4px; }
+        [contenteditable]:focus { outline: 2px solid #0074d9; background: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+    </style>
+</head>
+<body>
+<header><h1>Редактирование файла</h1></header>
+<main>
+    <section>
+        <form method="POST" enctype="multipart/form-data" action="/index">
+            <input type="file" name="file" accept=".txt" required>
+            <button type="submit">Загрузить</button>
+        </form>
+    </section>
+
+    {{if .}}
+    <section>
+        <table id="dataTable">
+            <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Название работы</th>
+                <th>Дата (ГГГГ.ММ.ДД)</th>
+                <th>Тип (a-f)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .}}
+            <tr>
+                <td contenteditable="true">{{.Name}}</td>
+                <td contenteditable="true">{{.NameOfWork}}</td>
+                <td contenteditable="true">{{.Date.Format "2006.01.02"}}</td>
+                <td contenteditable="true">{{.Type}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+        <div style="margin-top: 20px;">
+            <button onclick="downloadUpdated()">Скачать измененный .txt</button>
+        </div>
+    </section>
+    {{end}}
+</main>
+
+<script>
+    async function downloadUpdated() {
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        const data = Array.from(rows).map(row => {
+            const cells = row.querySelectorAll('td');
+            const rawDate = cells[2].innerText.trim().replace(/\./g, '-');
+            return {
+                Name: cells[0].innerText.trim(),
+                NameOfWork: cells[1].innerText.trim(),
+                Date: rawDate + "T00:00:00Z",
+                Type: cells[3].innerText.trim()
+            };
+        });
+
+        const response = await fetch('/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "output.txt";
+            a.click();
+        }
+    }
+</script>
+</body>
+</html>
