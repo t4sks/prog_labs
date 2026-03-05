@@ -1,7 +1,7 @@
 package main
 
 import (
-	"auiapp/model"
+	"Proga8kurs/2laba/model"
 	"bufio"
 	"bytes"
 	"encoding/json"
