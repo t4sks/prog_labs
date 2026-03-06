@@ -42,42 +42,17 @@
             {{end}}
             </tbody>
         </table>
+        <textarea id="resultArea"></textarea>
         <div style="margin-top: 20px;">
-            <button onclick="downloadUpdated()">Скачать измененный .txt</button>
+            <button onclick="clearTable()">Очистить таблицу</button>
+            <button onclick="downloadUpdated()">Выгрузить данные</button>
+            <button onclick="newString()">Добавить строчку</button>
+            <button id='download'>Скачать в .txt</button>
         </div>
     </section>
     {{end}}
 </main>
 
-<script>
-    async function downloadUpdated() {
-        const rows = document.querySelectorAll('#dataTable tbody tr');
-        const data = Array.from(rows).map(row => {
-            const cells = row.querySelectorAll('td');
-            const rawDate = cells[2].innerText.trim().replace(/\./g, '-');
-            return {
-                Name: cells[0].innerText.trim(),
-                NameOfWork: cells[1].innerText.trim(),
-                Date: rawDate + "T00:00:00Z",
-                Type: cells[3].innerText.trim()
-            };
-        });
-
-        const response = await fetch('/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "output.txt";
-            a.click();
-        }
-    }
-</script>
+<script src="/static/mainpage.js"></script>
 </body>
 </html>
