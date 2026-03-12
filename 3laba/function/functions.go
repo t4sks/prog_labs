@@ -1,5 +1,6 @@
 package function
 
+//testhook
 import (
 	"auiapp/model"
 	"bufio"
