@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>"2 Лаборторная"</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+        [contenteditable] { padding: 5px; border-radius: 4px; }
+        [contenteditable]:focus { outline: 2px solid #0074d9; background: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+    </style>
+</head>
+<body>
+<header><h1>Редактирование файла</h1></header>
+<main>
+    <section>
+        <form method="POST" enctype="multipart/form-data" action="/index">
+            <input type="file" name="file" accept=".txt" required>
+            <button type="submit">Загрузить</button>
+        </form>
+    </section>
+
+    {{if .}}
+    <section>
+        <div style="margin-bottom: 20px;">
+            <input type="file" id="commandsFile" accept=".txt">
+            <button type="button" onclick="applyCommands()">Применить команды</button>
+        </div>
+        <table id="dataTable">
+            <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Название работы</th>
+                <th>Дата (ГГГГ.ММ.ДД)</th>
+                <th>Тип (a-f)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .}}
+            <tr>
+                <td contenteditable="true">{{.Name}}</td>
+                <td contenteditable="true">{{.NameOfWork}}</td>
+                <td contenteditable="true">{{.Date.Format "2006.01.02"}}</td>
+                <td contenteditable="true">{{.Type}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+        <textarea id="resultArea"></textarea>
+        <div style="margin-top: 20px;">
+            <button onclick="clearTable()">Очистить таблицу</button>
+            <button onclick="downloadUpdated()">Выгрузить данные</button>
+            <button onclick="newString()">Добавить строчку</button>
+            <button id='download'>Скачать в .txt</button>
+        </div>
+    </section>
+    {{end}}
+</main>
+
+<script src="/static/mainpage.js"></script>
+</body>
+</html>
