@@ -29,10 +29,8 @@ func ParsingFile(data []byte) []model.ProjectWork {
 		}
 
 		work := ParcingLine(line)
+		works = append(works, work)
 
-		if work.Name != "" {
-			works = append(works, work)
-		}
 	}
 
 	return works
@@ -51,7 +49,7 @@ func ParcingLine(line string) model.ProjectWork {
 		res.Type = split[4]
 	} else {
 		log.Println("Некорректная строка:", line)
-		return model.ProjectWork{}
+		res.Error = "некорректная строка " + line
 	}
 	return res
 }

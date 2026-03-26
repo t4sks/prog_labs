@@ -37,12 +37,14 @@
             </thead>
             <tbody>
             {{range .}}
+            {{if eq .Error ""}}
             <tr>
                 <td contenteditable="true">{{.Name}}</td>
                 <td contenteditable="true">{{.NameOfWork}}</td>
                 <td contenteditable="true">{{.Date.Format "2006.01.02"}}</td>
                 <td contenteditable="true">{{.Type}}</td>
             </tr>
+            {{end}}
             {{end}}
             </tbody>
         </table>
@@ -53,6 +55,9 @@
             <button onclick="newString()">Добавить строчку</button>
             <button id='download'>Скачать в .txt</button>
         </div>
+        <p>Неправильные строки</p>
+        <textarea id="ErrorArea">{{range .}}{{if ne .Error ""}}{{.Error}}
+{{end}}{{end}}</textarea>
     </section>
     {{end}}
 </main>

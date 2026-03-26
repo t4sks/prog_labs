@@ -7,4 +7,5 @@ type ProjectWork struct {
 	NameOfWork string    `json:"NameOfWork"`
 	Date       time.Time `json:"Date"`
 	Type       string    `json:"Type"`
+	Error      string    `json:"Error"`
 }

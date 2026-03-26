@@ -13,7 +13,7 @@ function collectTableData() {
         return {
             Name: cells[0].innerText.trim(),
             NameOfWork: cells[1].innerText.trim(),
-            Date: rawDate + "T00:00:00Z",
+            Date: rawDate ? rawDate + 'T00:00:00Z' : '',
             Type: cells[3].innerText.trim()
         };
     });
@@ -28,7 +28,10 @@ function renderTable(data) {
 
         let formattedDate = '';
         if (item.Date) {
-            formattedDate = new Date(item.Date).toISOString().slice(0, 10).replace(/-/g, '.');
+            const parsedDate = new Date(item.Date);
+            if (!isNaN(parsedDate.getTime())) {
+                formattedDate = parsedDate.toISOString().slice(0, 10).replace(/-/g, '.');
+            }
         }
 
         row.innerHTML = `
@@ -40,6 +43,22 @@ function renderTable(data) {
 
         tbody.appendChild(row);
     });
+}
+
+function newString() {
+    const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+    const newRow = dataTable.insertRow();
+
+    for (let i = 0; i < 4; i++) {
+        const cell = newRow.insertCell();
+        cell.contentEditable = true;
+        cell.textContent = '';
+    }
+}
+
+function clearTable() {
+    const tbody = document.querySelector('#dataTable tbody');
+    tbody.innerHTML = '';
 }
 
 async function downloadUpdated() {
@@ -59,17 +78,6 @@ async function downloadUpdated() {
     const text = await response.text();
     const textarea = document.getElementById('resultArea');
     textarea.value = text;
-}
-
-function newString() {
-    const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
-    const newRow = dataTable.insertRow();
-
-    for (let i = 0; i < 4; i++) {
-        const cell = newRow.insertCell();
-        cell.contentEditable = true;
-        cell.textContent = '';
-    }
 }
 
 async function download() {
@@ -94,13 +102,10 @@ async function download() {
     URL.revokeObjectURL(url);
 }
 
-function clearTable() {
-    const tbody = document.querySelector('#dataTable tbody');
-    tbody.innerHTML = '';
-}
-
 async function applyCommands() {
     const fileInput = document.getElementById('commandsFile');
+    const errorArea = document.getElementById('ErrorArea');
+    const resultArea = document.getElementById('resultArea');
 
     if (!fileInput.files.length) {
         alert('Выберите файл команд');
@@ -125,8 +130,25 @@ async function applyCommands() {
 
     const updatedWorks = await response.json();
 
-    renderTable(updatedWorks);
+    const validWorks = [];
+    const errors = [];
 
-    const textarea = document.getElementById('resultArea');
-    textarea.value = '';
+    updatedWorks.forEach(item => {
+        const nameEmpty = !item.Name || item.Name.trim() === '';
+
+        if (nameEmpty) {
+            if (item.Error && item.Error.trim() !== '') {
+                errors.push(item.Error);
+            } else {
+                errors.push('Некорректный объект без текста ошибки');
+            }
+            return;
+        }
+
+        validWorks.push(item);
+    });
+
+    renderTable(validWorks);
+    errorArea.value = errors.join('\n');
+    resultArea.value = '';
 }
